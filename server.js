@@ -4,6 +4,8 @@ var PORT = process.env.PORT || 8080;
 
 var app = express();
 
+const connection = require("./config/connection.js");
+
 // Serve static content for the app from the "public" directory in the application directory.
 app.use(express.static("public"));
 
@@ -23,7 +25,12 @@ app.set("view engine", "handlebars");
 // app.use(routes);
 
 app.get("/", function(req, res) {
-  res.render('index');
+  connection.query("SELECT * FROM cats", function(err, data) {
+    if (err) {
+      return res.status(500)("An error occurred");
+    }
+    res.render("index", { cats: data});
+  });
 });
 
 // Start our server so that it can begin listening to client requests.
